@@ -1,6 +1,5 @@
 import os
 from datetime import date, timedelta
-from typing import Optional
 from urllib.parse import urljoin
 
 import requests
@@ -26,6 +25,10 @@ class baaqmd(DataSource):
         301: "Hazardous",
     }
 
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.authkey = os.environ.get("BAAQMD_AUTH_KEY")
+
     def query_air_quality_data(self) -> dict:
         results = cache.get(self.__class__.__name__)
 
@@ -49,7 +52,7 @@ class baaqmd(DataSource):
                 params=params,
                 headers=headers,
                 json=data,
-                timeout=self.http_timeout,
+                timeout=self.http_timeout_in_seconds,
             ).json()
 
             data = {
@@ -63,7 +66,7 @@ class baaqmd(DataSource):
                 params=params,
                 headers=headers,
                 json=data,
-                timeout=self.http_timeout,
+                timeout=self.http_timeout_in_seconds,
             ).json()
             results = [yesterday, today]
 
@@ -102,7 +105,7 @@ class baaqmd(DataSource):
 
         return aqi
 
-    def get_latest_value_by_station(self, zones: Optional[list] = None) -> list:
+    def get_latest_value_by_station(self, zones: list | None = None) -> list:
         if zones is None:
             zones = self.zones
 
@@ -166,6 +169,9 @@ class baaqmd(DataSource):
         return stations.values()
 
     def get_status(self) -> dict:
+        if self.authkey is None:
+            raise Exception("No authkey found for air quality monitor!")
+
         stations = self.get_latest_value_by_station()
 
         bad_air_stations = []
