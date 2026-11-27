@@ -27,7 +27,7 @@ class baaqmd(DataSource):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.authkey = os.environ.get("BAAQMD_AUTH_KEY")
+        self.authkey = os.environ.get("BAAQMD_AUTHKEY")
         print(f"init: {self.authkey}")
 
     def query_air_quality_data(self) -> dict:
