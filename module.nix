@@ -33,7 +33,7 @@ in
 
         options = {
           service = {
-            cache_dir = lib.mkOption {
+            cache_directory = lib.mkOption {
               type = lib.types.str;
               default = "/var/cache/japantown-monitor";
               description = "Directory used by diskcache.";
