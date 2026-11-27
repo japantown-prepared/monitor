@@ -1,5 +1,4 @@
 # Application
-PyYAML~=6.0
 requests~=2.33
 diskcache~=5.6
 

@@ -24,13 +24,13 @@ https://www.baaqmd.gov/about-air-quality/current-air-quality/air-monitoring-data
 Water levels:
 https://alert.valleywater.org/map?p=map
 
-Running the script will return either a "levels normal" message or a detailed description of what has triggered an alert. The `config.yaml` file will tell the monitor what stations to look at for information. Here is an example:
+Running the script will return either a "levels normal" message or a detailed description of what has triggered an alert. The `config.toml` file will tell the monitor what stations to look at for information. Here is an example:
 
 ```
-global:
+service:
   cache_directory: "~/.cache/japantown_prepared_monitor"
   cache_expiry_in_seconds: 600
-  http_timeout: 10
+  http_timeout_in_seconds: 10
 
 valleywater:
   watershed: Guadalupe
@@ -45,16 +45,16 @@ baaqmd:
         - 7032
 ```
 
-String items in the `config.yaml` file can be overridden from the environment using the format `MONITOR__{section}__{attribute}`. For example, to override the `authkey` attribute in the `baaqmd` section, set the `MONITOR__baaqmd__authkey` environment variable.
+String items in the `config.toml` file can be overridden from the environment using the format `MONITOR__{section}__{attribute}`. For example, to override the `authkey` attribute in the `baaqmd` section, set the `MONITOR__baaqmd__authkey` environment variable.
 
-#### global config:
+#### service config:
 
 | Item                    | Description                                                               |
 | ----------------------- | ------------------------------------------------------------------------- |
 | cache_directory         | The path to the cache directory.                                          |
 | cache_expiry_in_seconds | The time in seconds after which to request new data from the data source. |
 | log_level               | The log level to send to the console.                                     |
-| http_timeout            | The time in seconds to wait for data from the data source.                |
+| http_timeout_in_seconds | The time in seconds to wait for data from the data source.                |
 
 #### valleywater config:
 
@@ -96,7 +96,7 @@ The `zones` are manitory along with the `name` attribute of the zone. The `stati
 
 ## Adding new data sources
 
-Each data source has its own file in the `data_sources` directory. In that file is a class which extends from the `DataSource` class. The name of the class is used to load the configuration from the `config.yaml` file. For example, in the `water_levels_valleywater.py` file, there's a class called `valleywater`. In the `config.yaml`, there's a corresponding attribute named `valleywater`. All the attributes under that will be available as instance variables. It's up to each class to implement the `get_status()` method and return the following structure:
+Each data source has its own file in the `data_sources` directory. In that file is a class which extends from the `DataSource` class. The name of the class is used to load the configuration from the `config.toml` file. For example, in the `water_levels_valleywater.py` file, there's a class called `valleywater`. In the `config.toml`, there's a corresponding attribute named `valleywater`. All the attributes under that will be available as instance variables. It's up to each class to implement the `get_status()` method and return the following structure:
 
 ```
 {

@@ -1,0 +1,30 @@
+[service]
+cache_expiry_in_seconds = 600
+http_timeout_in_seconds = 15
+log_level = "WARN"
+interval = "15m"
+
+[notify]
+enable = false
+sender_email = "email@senderdomain.com"
+sender_name = "Air Monitor Service"
+to = [ "email@receiverdomain.com" ]
+smtp_host = "localhost"
+smtp_port = 25
+ssl = false
+smtp_username = ""
+smtp_password = ""
+
+[valleywater]
+enable = true
+watershed = "Guadalupe"
+station_ids = [ 12, 54 ]
+
+[baaqmd]
+enable = true
+authkey = "your_auth_key"
+
+[[baaqmd.zones]]
+name = "Santa Clara Valley"
+station_ids = [ 7032 ]
+alert_level = 51

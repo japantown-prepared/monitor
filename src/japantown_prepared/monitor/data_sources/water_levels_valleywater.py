@@ -1,5 +1,4 @@
-from datetime import datetime, timezone
-from typing import Dict, List
+from datetime import UTC, datetime
 from urllib.parse import urljoin
 
 import requests
@@ -17,7 +16,8 @@ class valleywater(DataSource):
         if results is None:
             logger.debug("No water level data in cache.")
             resp = requests.get(
-                urljoin(self.base_url, "/Sensor/current"), timeout=self.http_timeout
+                urljoin(self.base_url, "/Sensor/current"),
+                timeout=self.http_timeout_in_seconds,
             )
             results = resp.json()["streams"]
             cache.set(self.__class__.__name__, results)
@@ -26,7 +26,7 @@ class valleywater(DataSource):
 
         return results
 
-    def get_water_stations(self, watershed=None, station_ids=None) -> List[Dict]:
+    def get_water_stations(self, watershed=None, station_ids=None) -> list[dict]:
         all_stations = self.load_water_stations()
 
         if watershed is None:
@@ -43,8 +43,7 @@ class valleywater(DataSource):
 
             # If the station was last updated over 24 hours ago, skip it.
             if (
-                datetime.now(timezone.utc)
-                - datetime.fromisoformat(station["timestamp"])
+                datetime.now(UTC) - datetime.fromisoformat(station["timestamp"])
             ).total_seconds() > 60 * 60 * 24:
                 continue
 
@@ -62,7 +61,7 @@ class valleywater(DataSource):
 
     def get_water_stations_above_threshold(
         self, watershed=None, station_ids=None, above_threshold=1
-    ) -> List[Dict]:
+    ) -> list[dict]:
         water_severity = {
             0: "Normal",
             1: "Take Action",
@@ -100,7 +99,7 @@ class valleywater(DataSource):
 
         return stations_above_threshold
 
-    def get_status(self) -> Dict:
+    def get_status(self) -> dict:
         water_stations = self.get_water_stations_above_threshold()
 
         alerts = []

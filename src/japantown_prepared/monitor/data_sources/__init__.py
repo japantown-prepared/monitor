@@ -13,7 +13,7 @@ class DataSource:
 
     def __init__(self, **kwargs) -> None:
         self.__dict__.update(kwargs)
-        self.cache_filename = f"{self.cache_directory}/{self.__class__.__name__}.yaml"
+        self.cache_filename = f"{self.cache_directory}/{self.__class__.__name__}.toml"
 
     def create_hash(self, hash_strings):
         sorted_strings = "".join(sorted(hash_strings))
@@ -37,7 +37,7 @@ def curl_format(req):
     method = req.method
     uri = req.url
     data = req.body
-    headers = ['"{0}: {1}"'.format(k, v) for k, v in req.headers.items()]
+    headers = [f'"{k}: {v}"' for k, v in req.headers.items()]
     headers = " -H ".join(headers)
     return command.format(method=method, headers=headers, data=data, uri=uri)
 

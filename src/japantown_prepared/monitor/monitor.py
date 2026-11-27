@@ -12,7 +12,7 @@ def get_statuses() -> dict:
         if name not in config:
             continue
 
-        inst = _class(**config.get(name, {}), **config.get("global", {}))
+        inst = _class(**config.get(name, {}), **config.get("service", {}))
 
         if not inst.enable:
             continue

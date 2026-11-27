@@ -1,46 +1,29 @@
 import logging
 import os
+import tomllib
 
-import yaml
 from dotenv import load_dotenv
 
 from . import logger
 
 load_dotenv()
 
+config_file = os.environ.get("MONITOR_CONFIG_FILE", "config.toml")
 
-config_file = os.environ.get("MONITOR_CONFIG_FILE", "config.yaml")
+with open(config_file, "rb") as f:
+    config = tomllib.load(f)
 
-# Defaults for the config go here:
-config = {
-    "global": {
-        "cache_directory": "~/.cache/japantown_prepared_monitor",
-        "cache_expiry_in_seconds": 600,
-        "log_level": "WARN",
-        "http_timeout": 20,
-    },
-    "notify": {
-        "enable": False,
-        "smtp_host": "localhost",
-        "smtp_port": 25,
-        "ssl": False,
-    },
-}
+config.setdefault("service", {})
+config["service"].setdefault("cache_directory", "~/.cache/japantown_prepared_monitor")
+config["service"].setdefault("cache_expiry_in_seconds", 600)
+config["service"].setdefault("log_level", "WARN")
+config["service"].setdefault("http_timeout_in_seconds", 20)
+config["service"].setdefault("interval", "15m")
 
-with open(config_file, "r") as f:
-    config_from_file = yaml.safe_load(f)
-    for k, v in config_from_file.items():
-        if k in config:
-            config[k].update(v)
-        else:
-            config[k] = v
+config.setdefault("notify", {})
+config["notify"].setdefault("enable", False)
+config["notify"].setdefault("smtp_host", "localhost")
+config["notify"].setdefault("smtp_port", 25)
+config["notify"].setdefault("ssl", False)
 
-# Environment variables in the form of MONITOR__{section}__{attribute}
-# will replace existing, or add to, the config object.
-for module_name, variables in config.items():
-    for k, v in variables.items():
-        env_name = f"MONITOR__{module_name}__{k}"
-        config[module_name][k] = os.environ.get(env_name, v)
-        e = os.environ.get(env_name)
-
-logger.setLevel(logging.getLevelName(config["global"]["log_level"].upper()))
+logger.setLevel(logging.getLevelName(config["service"]["log_level"].upper()))
