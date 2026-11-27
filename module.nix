@@ -193,8 +193,9 @@ in
         User = "jtp-monitor";
         Group = "jtp-monitor";
         CacheDirectory = "japantown-monitor";
+        Environment = "MONITOR_CONFIG_FILE=${configFile}";
         EnvironmentFile = lib.mkIf (cfg.environmentFile != null) cfg.environmentFile;
-        ExecStart = "${cfg.package}/bin/japantown-monitor --config ${configFile}";
+        ExecStart = "${cfg.package}/bin/japantown-monitor";
 
         # Filesystem & Privilege Hardening
         NoNewPrivileges = true;
