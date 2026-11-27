@@ -28,6 +28,7 @@ class baaqmd(DataSource):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(**kwargs)
         self.authkey = os.environ.get("BAAQMD_AUTH_KEY")
+        print(f"init: {self.authkey}")
 
     def query_air_quality_data(self) -> dict:
         results = cache.get(self.__class__.__name__)
@@ -169,6 +170,7 @@ class baaqmd(DataSource):
         return stations.values()
 
     def get_status(self) -> dict:
+        print(f"get_status: {self.authkey}")
         if self.authkey is None:
             raise Exception("No authkey found for air quality monitor!")
 
